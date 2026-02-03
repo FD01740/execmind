@@ -1,6 +1,8 @@
 import sys
 import os
 from rich.prompt import Prompt, Confirm
+from rich.panel import Panel
+from rich.markdown import Markdown
 
 # Add project root to sys.path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))

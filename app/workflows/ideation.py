@@ -1,4 +1,5 @@
 from app.llm.client import call_llm
+import json
 from app.storage.database import SessionLocal, Idea
 from app.utils.parsing import parse_json_safely
 from app.context.provider import get_context
@@ -7,7 +8,10 @@ from app.llm.client import call_llm
 from app.storage.database import SessionLocal, Idea
 from app.utils.parsing import parse_json_safely
 from app.context.provider import get_context
-from duckduckgo_search import DDGS
+try:
+    from ddgs import DDGS
+except ImportError:
+    from duckduckgo_search import DDGS
 
 # 1. Framing Prompt
 FRAMING_SYSTEM_PROMPT = """
@@ -109,12 +113,20 @@ def save_structured_idea(raw_input: str, source: str) -> Idea:
     
     db = SessionLocal()
     try:
+        assumptions = parsed_data.get("assumptions")
+        if isinstance(assumptions, list):
+            assumptions = json.dumps(assumptions)
+            
+        target_users = parsed_data.get("target_users")
+        if isinstance(target_users, list):
+            target_users = json.dumps(target_users)
+
         new_idea = Idea(
             raw_input=raw_input,
             problem_statement=parsed_data.get("problem_statement"),
             proposed_solution=parsed_data.get("proposed_solution"),
-            target_users=parsed_data.get("target_users"),
-            assumptions=parsed_data.get("assumptions"),
+            target_users=target_users,
+            assumptions=assumptions,
             source=source
         )
         db.add(new_idea)

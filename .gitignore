@@ -1,2 +1,13 @@
+# Secrets
 .env
+
+# Virtual environments
+.venv/
 .venv_wsl/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Local database
+*.db
